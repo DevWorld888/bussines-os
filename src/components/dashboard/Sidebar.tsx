@@ -37,7 +37,7 @@ function NavLink({ href, label }: { href: string; label: string }) {
 
 export default function Sidebar() {
   return (
-    <aside className="w-56 shrink-0 h-screen sticky top-0 flex flex-col border-r border-[#e5e5e5] bg-white">
+    <aside className="hidden md:flex w-56 shrink-0 h-screen sticky top-0 flex-col border-r border-[#e5e5e5] bg-white">
       {/* Brand */}
       <div className="h-[56px] flex items-center px-5 border-b border-[#e5e5e5]">
         <span className="text-[14px] font-semibold text-[#000000] tracking-tight">

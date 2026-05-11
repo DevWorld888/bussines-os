@@ -18,7 +18,7 @@ const recentActivity = [
 
 export default function DashboardPage() {
   return (
-    <div className="flex flex-col" style={{ gap: "83px" }}>
+    <div className="flex flex-col gap-10 md:gap-[83px]">
 
       {/* Section: Overview */}
       <section className="flex flex-col gap-4">
