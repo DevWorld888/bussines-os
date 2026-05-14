@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Lead {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String
+  email     String
+  service   String
+  status    String   @default("new")
+  source    String
+  followUp  String?
+  createdAt DateTime @default(now())
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String
+  email     String
+  status    String   @default("active")
+  since     String
+  jobs      Job[]
+  quotes    Quote[]
+  createdAt DateTime @default(now())
+}
+
+model Job {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+  service    String
+  address    String
+  date       String
+  value      Float
+  status     String   @default("scheduled")
+  createdAt  DateTime @default(now())
+}
+
+model Quote {
+  id          Int      @id @default(autoincrement())
+  quoteNumber String   @unique
+  customerId  Int
+  customer    Customer @relation(fields: [customerId], references: [id])
+  service     String
+  date        String
+  expiresOn   String
+  total       Float
+  status      String   @default("draft")
+  createdAt   DateTime @default(now())
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  title     String
+  relatedTo String
+  dueDate   String
+  priority  String   @default("medium")
+  status    String   @default("todo")
+  createdAt DateTime @default(now())
+}
+
+model UserProfile {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String
+  phone String
+  role  String @default("Owner")
+}
+
+model BusinessInfo {
+  id       Int    @id @default(autoincrement())
+  bizName  String
+  abn      String
+  industry String
+  website  String
+  address  String
+  currency String @default("AUD")
+}

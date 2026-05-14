@@ -1,6 +1,6 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
-import Badge from "@/components/dashboard/Badge";
-import { leads, leadSummary } from "@/data/leads";
+import Badge, { type BadgeVariant } from "@/components/dashboard/Badge";
+import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = [
   "Name",
@@ -12,7 +12,16 @@ const TABLE_COLS = [
   "Follow-up",
 ];
 
-export default function LeadsPage() {
+export default async function LeadsPage() {
+  const leads = await prisma.lead.findMany({ orderBy: { createdAt: "asc" } });
+
+  const summary = {
+    new:       leads.filter((l) => l.status === "new").length,
+    quoteSent: leads.filter((l) => l.status === "quote-sent").length,
+    won:       leads.filter((l) => l.status === "won").length,
+    lost:      leads.filter((l) => l.status === "lost").length,
+  };
+
   return (
     <div className="flex flex-col" style={{ gap: "40px" }}>
 
@@ -31,10 +40,10 @@ export default function LeadsPage() {
 
       {/* ── Summary cards ───────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-        <OverviewCard label="New Leads"   value={String(leadSummary.new)}       />
-        <OverviewCard label="Quote Sent"  value={String(leadSummary.quoteSent)} />
-        <OverviewCard label="Won"         value={String(leadSummary.won)}       />
-        <OverviewCard label="Lost"        value={String(leadSummary.lost)}      />
+        <OverviewCard label="New Leads"   value={String(summary.new)}       />
+        <OverviewCard label="Quote Sent"  value={String(summary.quoteSent)} />
+        <OverviewCard label="Won"         value={String(summary.won)}       />
+        <OverviewCard label="Lost"        value={String(summary.lost)}      />
       </div>
 
       {/* ── Table section ───────────────────────────────────── */}
@@ -67,13 +76,10 @@ export default function LeadsPage() {
                 </tr>
               </thead>
               <tbody>
-                {leads.map((lead, i) => (
+                {leads.map((lead) => (
                   <tr
                     key={lead.id}
-                    className={[
-                      "border-b border-[#e5e5e5] last:border-0 transition-colors hover:bg-[#f9f9f9]",
-                      i % 2 === 0 ? "bg-white" : "bg-white",
-                    ].join(" ")}
+                    className="border-b border-[#e5e5e5] last:border-0 bg-white transition-colors hover:bg-[#f9f9f9]"
                   >
                     <td className="px-4 py-3 t-small font-medium text-[#000000] whitespace-nowrap">
                       {lead.name}
@@ -88,13 +94,13 @@ export default function LeadsPage() {
                       {lead.service}
                     </td>
                     <td className="px-4 py-3">
-                      <Badge status={lead.status} />
+                      <Badge status={lead.status as BadgeVariant} />
                     </td>
                     <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
                       {lead.source}
                     </td>
                     <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
-                      {lead.followUp}
+                      {lead.followUp ?? "—"}
                     </td>
                   </tr>
                 ))}
