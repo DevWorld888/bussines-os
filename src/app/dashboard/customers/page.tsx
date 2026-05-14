@@ -1,9 +1,9 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
-import { customers, customerSummary } from "@/data/customers";
+import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = ["Name", "Phone", "Email", "Total Jobs", "Total Spend", "Status", "Customer Since"];
 
-function CustomerStatusBadge({ status }: { status: "active" | "inactive" }) {
+function CustomerStatusBadge({ status }: { status: string }) {
   return (
     <span
       className={[
@@ -22,7 +22,25 @@ function formatCurrency(value: number) {
   return "$" + value.toLocaleString("en-AU");
 }
 
-export default function CustomersPage() {
+export default async function CustomersPage() {
+  const customers = await prisma.customer.findMany({
+    orderBy: { createdAt: "asc" },
+    include: {
+      jobs:   { select: { value: true } },
+      quotes: false,
+    },
+  });
+
+  const summary = {
+    total:    customers.length,
+    active:   customers.filter((c) => c.status === "active").length,
+    inactive: customers.filter((c) => c.status === "inactive").length,
+    totalRevenue: customers.reduce(
+      (sum, c) => sum + c.jobs.reduce((s, j) => s + j.value, 0),
+      0
+    ),
+  };
+
   return (
     <div className="flex flex-col" style={{ gap: "40px" }}>
 
@@ -41,10 +59,10 @@ export default function CustomersPage() {
 
       {/* ── Summary cards ───────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-        <OverviewCard label="Total Customers" value={String(customerSummary.total)} />
-        <OverviewCard label="Active"          value={String(customerSummary.active)} />
-        <OverviewCard label="Inactive"        value={String(customerSummary.inactive)} />
-        <OverviewCard label="Total Revenue"   value={formatCurrency(customerSummary.totalRevenue)} />
+        <OverviewCard label="Total Customers" value={String(summary.total)}                   />
+        <OverviewCard label="Active"           value={String(summary.active)}                 />
+        <OverviewCard label="Inactive"         value={String(summary.inactive)}               />
+        <OverviewCard label="Total Revenue"    value={formatCurrency(summary.totalRevenue)}   />
       </div>
 
       {/* ── Table section ───────────────────────────────────── */}
@@ -77,34 +95,39 @@ export default function CustomersPage() {
                 </tr>
               </thead>
               <tbody>
-                {customers.map((customer) => (
-                  <tr
-                    key={customer.id}
-                    className="border-b border-[#e5e5e5] last:border-0 bg-white transition-colors hover:bg-[#f9f9f9]"
-                  >
-                    <td className="px-4 py-3 t-small font-medium text-[#000000] whitespace-nowrap">
-                      {customer.name}
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
-                      {customer.phone}
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#737373]">
-                      {customer.email}
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#0a0a0a] text-center">
-                      {customer.totalJobs}
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#0a0a0a] whitespace-nowrap">
-                      {formatCurrency(customer.totalSpend)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <CustomerStatusBadge status={customer.status} />
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
-                      {customer.since}
-                    </td>
-                  </tr>
-                ))}
+                {customers.map((customer) => {
+                  const totalJobs  = customer.jobs.length;
+                  const totalSpend = customer.jobs.reduce((s, j) => s + j.value, 0);
+
+                  return (
+                    <tr
+                      key={customer.id}
+                      className="border-b border-[#e5e5e5] last:border-0 bg-white transition-colors hover:bg-[#f9f9f9]"
+                    >
+                      <td className="px-4 py-3 t-small font-medium text-[#000000] whitespace-nowrap">
+                        {customer.name}
+                      </td>
+                      <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
+                        {customer.phone}
+                      </td>
+                      <td className="px-4 py-3 t-small text-[#737373]">
+                        {customer.email}
+                      </td>
+                      <td className="px-4 py-3 t-small text-[#0a0a0a] text-center">
+                        {totalJobs}
+                      </td>
+                      <td className="px-4 py-3 t-small text-[#0a0a0a] whitespace-nowrap">
+                        {formatCurrency(totalSpend)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <CustomerStatusBadge status={customer.status} />
+                      </td>
+                      <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
+                        {customer.since}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
