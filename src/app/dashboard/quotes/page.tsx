@@ -1,7 +1,9 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
-import { quotes, quoteSummary, type QuoteStatus } from "@/data/quotes";
+import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = ["Quote #", "Customer", "Service", "Date", "Expires", "Total", "Status"];
+
+type QuoteStatus = "draft" | "sent" | "accepted" | "rejected";
 
 const statusStyles: Record<QuoteStatus, string> = {
   "draft":    "bg-[#f2f2f2] text-[#737373]",
@@ -17,15 +19,16 @@ const statusLabels: Record<QuoteStatus, string> = {
   "rejected": "Rejected",
 };
 
-function QuoteStatusBadge({ status }: { status: QuoteStatus }) {
+function QuoteStatusBadge({ status }: { status: string }) {
+  const s = status as QuoteStatus;
   return (
     <span
       className={[
         "inline-flex items-center px-2 py-0.5 rounded-[26px] text-[11px] font-medium whitespace-nowrap",
-        statusStyles[status],
+        statusStyles[s] ?? "bg-[#f2f2f2] text-[#737373]",
       ].join(" ")}
     >
-      {statusLabels[status]}
+      {statusLabels[s] ?? status}
     </span>
   );
 }
@@ -34,7 +37,21 @@ function formatCurrency(value: number) {
   return "$" + value.toLocaleString("en-AU");
 }
 
-export default function QuotesPage() {
+export default async function QuotesPage() {
+  const quotes = await prisma.quote.findMany({
+    orderBy: { createdAt: "asc" },
+    include: { customer: { select: { name: true } } },
+  });
+
+  const summary = {
+    total:      quotes.length,
+    draft:      quotes.filter((q) => q.status === "draft").length,
+    sent:       quotes.filter((q) => q.status === "sent").length,
+    wonValue:   quotes
+      .filter((q) => q.status === "accepted")
+      .reduce((sum, q) => sum + q.total, 0),
+  };
+
   return (
     <div className="flex flex-col" style={{ gap: "40px" }}>
 
@@ -53,10 +70,10 @@ export default function QuotesPage() {
 
       {/* ── Summary cards ───────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-        <OverviewCard label="Total Quotes" value={String(quoteSummary.total)}                   />
-        <OverviewCard label="Draft"        value={String(quoteSummary.draft)}                   />
-        <OverviewCard label="Sent"         value={String(quoteSummary.sent)}                    />
-        <OverviewCard label="Won Value"    value={formatCurrency(quoteSummary.totalValue)}      />
+        <OverviewCard label="Total Quotes" value={String(summary.total)}              />
+        <OverviewCard label="Draft"        value={String(summary.draft)}              />
+        <OverviewCard label="Sent"         value={String(summary.sent)}               />
+        <OverviewCard label="Won Value"    value={formatCurrency(summary.wonValue)}   />
       </div>
 
       {/* ── Table section ───────────────────────────────────── */}
@@ -98,7 +115,7 @@ export default function QuotesPage() {
                       {quote.quoteNumber}
                     </td>
                     <td className="px-4 py-3 t-small text-[#0a0a0a] whitespace-nowrap">
-                      {quote.customer}
+                      {quote.customer.name}
                     </td>
                     <td className="px-4 py-3 t-small text-[#0a0a0a] whitespace-nowrap">
                       {quote.service}

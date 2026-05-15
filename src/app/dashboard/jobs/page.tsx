@@ -1,31 +1,34 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
-import { jobs, jobSummary, type JobStatus } from "@/data/jobs";
+import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = ["Customer", "Service", "Address", "Date", "Value", "Status"];
 
+type JobStatus = "scheduled" | "in-progress" | "completed" | "cancelled";
+
 const statusStyles: Record<JobStatus, string> = {
-  "scheduled":  "bg-[#f2f2f2] text-[#0a0a0a]",
+  "scheduled":   "bg-[#f2f2f2] text-[#0a0a0a]",
   "in-progress": "bg-[#171717] text-white",
-  "completed":  "bg-[#10c22b]/10 text-[#0a7a1b]",
-  "cancelled":  "bg-[#c22b10]/10 text-[#9a2208]",
+  "completed":   "bg-[#10c22b]/10 text-[#0a7a1b]",
+  "cancelled":   "bg-[#c22b10]/10 text-[#9a2208]",
 };
 
 const statusLabels: Record<JobStatus, string> = {
-  "scheduled":  "Scheduled",
+  "scheduled":   "Scheduled",
   "in-progress": "In Progress",
-  "completed":  "Completed",
-  "cancelled":  "Cancelled",
+  "completed":   "Completed",
+  "cancelled":   "Cancelled",
 };
 
-function JobStatusBadge({ status }: { status: JobStatus }) {
+function JobStatusBadge({ status }: { status: string }) {
+  const s = status as JobStatus;
   return (
     <span
       className={[
         "inline-flex items-center px-2 py-0.5 rounded-[26px] text-[11px] font-medium whitespace-nowrap",
-        statusStyles[status],
+        statusStyles[s] ?? "bg-[#f2f2f2] text-[#737373]",
       ].join(" ")}
     >
-      {statusLabels[status]}
+      {statusLabels[s] ?? status}
     </span>
   );
 }
@@ -34,7 +37,19 @@ function formatCurrency(value: number) {
   return "$" + value.toLocaleString("en-AU");
 }
 
-export default function JobsPage() {
+export default async function JobsPage() {
+  const jobs = await prisma.job.findMany({
+    orderBy: { createdAt: "asc" },
+    include: { customer: { select: { name: true } } },
+  });
+
+  const summary = {
+    total:      jobs.length,
+    scheduled:  jobs.filter((j) => j.status === "scheduled").length,
+    inProgress: jobs.filter((j) => j.status === "in-progress").length,
+    completed:  jobs.filter((j) => j.status === "completed").length,
+  };
+
   return (
     <div className="flex flex-col" style={{ gap: "40px" }}>
 
@@ -53,10 +68,10 @@ export default function JobsPage() {
 
       {/* ── Summary cards ───────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-        <OverviewCard label="Total Jobs"  value={String(jobSummary.total)}      />
-        <OverviewCard label="Scheduled"   value={String(jobSummary.scheduled)}  />
-        <OverviewCard label="In Progress" value={String(jobSummary.inProgress)} />
-        <OverviewCard label="Completed"   value={String(jobSummary.completed)}  />
+        <OverviewCard label="Total Jobs"  value={String(summary.total)}      />
+        <OverviewCard label="Scheduled"   value={String(summary.scheduled)}  />
+        <OverviewCard label="In Progress" value={String(summary.inProgress)} />
+        <OverviewCard label="Completed"   value={String(summary.completed)}  />
       </div>
 
       {/* ── Table section ───────────────────────────────────── */}
@@ -95,7 +110,7 @@ export default function JobsPage() {
                     className="border-b border-[#e5e5e5] last:border-0 bg-white transition-colors hover:bg-[#f9f9f9]"
                   >
                     <td className="px-4 py-3 t-small font-medium text-[#000000] whitespace-nowrap">
-                      {job.customer}
+                      {job.customer.name}
                     </td>
                     <td className="px-4 py-3 t-small text-[#0a0a0a] whitespace-nowrap">
                       {job.service}

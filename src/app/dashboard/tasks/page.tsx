@@ -1,7 +1,10 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
-import { tasks, taskSummary, type TaskStatus, type TaskPriority } from "@/data/tasks";
+import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = ["Task", "Related To", "Due Date", "Priority", "Status"];
+
+type TaskStatus   = "todo" | "in-progress" | "done";
+type TaskPriority = "low" | "medium" | "high";
 
 const statusStyles: Record<TaskStatus, string> = {
   "todo":        "bg-[#f2f2f2] text-[#737373]",
@@ -21,39 +24,41 @@ const priorityStyles: Record<TaskPriority, string> = {
   "high":   "bg-[#c22b10]/10 text-[#9a2208]",
 };
 
-const priorityLabels: Record<TaskPriority, string> = {
-  "low":    "Low",
-  "medium": "Medium",
-  "high":   "High",
-};
-
-function TaskStatusBadge({ status }: { status: TaskStatus }) {
+function TaskStatusBadge({ status }: { status: string }) {
+  const s = status as TaskStatus;
   return (
-    <span
-      className={[
-        "inline-flex items-center px-2 py-0.5 rounded-[26px] text-[11px] font-medium whitespace-nowrap",
-        statusStyles[status],
-      ].join(" ")}
-    >
-      {statusLabels[status]}
+    <span className={[
+      "inline-flex items-center px-2 py-0.5 rounded-[26px] text-[11px] font-medium whitespace-nowrap",
+      statusStyles[s] ?? "bg-[#f2f2f2] text-[#737373]",
+    ].join(" ")}>
+      {statusLabels[s] ?? status}
     </span>
   );
 }
 
-function PriorityBadge({ priority }: { priority: TaskPriority }) {
+function PriorityBadge({ priority }: { priority: string }) {
+  const p = priority as TaskPriority;
+  const label = p.charAt(0).toUpperCase() + p.slice(1);
   return (
-    <span
-      className={[
-        "inline-flex items-center px-2 py-0.5 rounded-[26px] text-[11px] font-medium whitespace-nowrap",
-        priorityStyles[priority],
-      ].join(" ")}
-    >
-      {priorityLabels[priority]}
+    <span className={[
+      "inline-flex items-center px-2 py-0.5 rounded-[26px] text-[11px] font-medium whitespace-nowrap",
+      priorityStyles[p] ?? "bg-[#f2f2f2] text-[#737373]",
+    ].join(" ")}>
+      {label}
     </span>
   );
 }
 
-export default function TasksPage() {
+export default async function TasksPage() {
+  const tasks = await prisma.task.findMany({ orderBy: { createdAt: "asc" } });
+
+  const summary = {
+    total:      tasks.length,
+    todo:       tasks.filter((t) => t.status === "todo").length,
+    inProgress: tasks.filter((t) => t.status === "in-progress").length,
+    done:       tasks.filter((t) => t.status === "done").length,
+  };
+
   return (
     <div className="flex flex-col" style={{ gap: "40px" }}>
 
@@ -72,10 +77,10 @@ export default function TasksPage() {
 
       {/* ── Summary cards ───────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-        <OverviewCard label="Total Tasks" value={String(taskSummary.total)}      />
-        <OverviewCard label="To Do"       value={String(taskSummary.todo)}       />
-        <OverviewCard label="In Progress" value={String(taskSummary.inProgress)} />
-        <OverviewCard label="Done"        value={String(taskSummary.done)}       />
+        <OverviewCard label="Total Tasks" value={String(summary.total)}      />
+        <OverviewCard label="To Do"       value={String(summary.todo)}       />
+        <OverviewCard label="In Progress" value={String(summary.inProgress)} />
+        <OverviewCard label="Done"        value={String(summary.done)}       />
       </div>
 
       {/* ── Table section ───────────────────────────────────── */}
