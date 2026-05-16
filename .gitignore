@@ -40,4 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Prisma client is generated automatically via predev/prebuild scripts.
+# Keep generated artifacts out of git to avoid noisy diffs.
 /src/generated/prisma
