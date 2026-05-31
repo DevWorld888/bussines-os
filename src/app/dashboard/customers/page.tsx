@@ -1,4 +1,5 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
+import NewCustomerDrawer from "@/components/dashboard/NewCustomerDrawer";
 import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = ["Name", "Phone", "Email", "Total Jobs", "Total Spend", "Status", "Customer Since"];
@@ -52,9 +53,7 @@ export default async function CustomersPage() {
             View and manage your existing customer base.
           </p>
         </div>
-        <button className="btn-primary shrink-0" type="button">
-          + New Customer
-        </button>
+        <NewCustomerDrawer />
       </div>
 
       {/* ── Summary cards ───────────────────────────────────── */}

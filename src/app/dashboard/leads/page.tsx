@@ -1,5 +1,6 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
 import Badge, { type BadgeVariant } from "@/components/dashboard/Badge";
+import NewLeadDrawer from "@/components/dashboard/NewLeadDrawer";
 import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = [
@@ -33,9 +34,7 @@ export default async function LeadsPage() {
             Manage potential customers and follow-ups.
           </p>
         </div>
-        <button className="btn-primary shrink-0" type="button">
-          + New Lead
-        </button>
+        <NewLeadDrawer />
       </div>
 
       {/* ── Summary cards ───────────────────────────────────── */}

@@ -1,4 +1,5 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
+import NewJobDrawer from "@/components/dashboard/NewJobDrawer";
 import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = ["Customer", "Service", "Address", "Date", "Value", "Status"];
@@ -38,10 +39,16 @@ function formatCurrency(value: number) {
 }
 
 export default async function JobsPage() {
-  const jobs = await prisma.job.findMany({
-    orderBy: { createdAt: "asc" },
-    include: { customer: { select: { name: true } } },
-  });
+  const [jobs, customers] = await Promise.all([
+    prisma.job.findMany({
+      orderBy: { createdAt: "asc" },
+      include: { customer: { select: { name: true } } },
+    }),
+    prisma.customer.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+  ]);
 
   const summary = {
     total:      jobs.length,
@@ -61,9 +68,7 @@ export default async function JobsPage() {
             Track scheduled and active jobs across all customers.
           </p>
         </div>
-        <button className="btn-primary shrink-0" type="button">
-          + New Job
-        </button>
+        <NewJobDrawer customers={customers} />
       </div>
 
       {/* ── Summary cards ───────────────────────────────────── */}
