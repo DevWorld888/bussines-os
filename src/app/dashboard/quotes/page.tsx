@@ -1,4 +1,5 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
+import NewQuoteDrawer from "@/components/dashboard/NewQuoteDrawer";
 import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = ["Quote #", "Customer", "Service", "Date", "Expires", "Total", "Status"];
@@ -38,10 +39,16 @@ function formatCurrency(value: number) {
 }
 
 export default async function QuotesPage() {
-  const quotes = await prisma.quote.findMany({
-    orderBy: { createdAt: "asc" },
-    include: { customer: { select: { name: true } } },
-  });
+  const [quotes, customers] = await Promise.all([
+    prisma.quote.findMany({
+      orderBy: { createdAt: "asc" },
+      include: { customer: { select: { name: true } } },
+    }),
+    prisma.customer.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+  ]);
 
   const summary = {
     total:      quotes.length,
@@ -63,9 +70,7 @@ export default async function QuotesPage() {
             Create and manage quotes for your customers.
           </p>
         </div>
-        <button className="btn-primary shrink-0" type="button">
-          + New Quote
-        </button>
+        <NewQuoteDrawer customers={customers} />
       </div>
 
       {/* ── Summary cards ───────────────────────────────────── */}
