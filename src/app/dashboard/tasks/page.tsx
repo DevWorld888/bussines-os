@@ -1,4 +1,5 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
+import NewTaskDrawer from "@/components/dashboard/NewTaskDrawer";
 import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = ["Task", "Related To", "Due Date", "Priority", "Status"];
@@ -70,9 +71,7 @@ export default async function TasksPage() {
             Stay on top of follow-ups, reminders, and open actions.
           </p>
         </div>
-        <button className="btn-primary shrink-0" type="button">
-          + New Task
-        </button>
+        <NewTaskDrawer />
       </div>
 
       {/* ── Summary cards ───────────────────────────────────── */}
