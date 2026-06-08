@@ -1,6 +1,6 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
-import Badge, { type BadgeVariant } from "@/components/dashboard/Badge";
 import NewLeadDrawer from "@/components/dashboard/NewLeadDrawer";
+import LeadStatusSelect from "@/components/dashboard/LeadStatusSelect";
 import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = [
@@ -93,7 +93,7 @@ export default async function LeadsPage() {
                       {lead.service}
                     </td>
                     <td className="px-4 py-3">
-                      <Badge status={lead.status as BadgeVariant} />
+                      <LeadStatusSelect id={lead.id} status={lead.status} />
                     </td>
                     <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
                       {lead.source}

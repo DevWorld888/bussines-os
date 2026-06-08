@@ -21,3 +21,9 @@ export async function createLead(formData: FormData) {
   revalidatePath("/dashboard/leads");
   revalidatePath("/dashboard");
 }
+
+export async function updateLeadStatus(id: number, status: string) {
+  await prisma.lead.update({ where: { id }, data: { status } });
+  revalidatePath("/dashboard/leads");
+  revalidatePath("/dashboard");
+}
