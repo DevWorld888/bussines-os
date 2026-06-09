@@ -1,8 +1,9 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
 import NewCustomerDrawer from "@/components/dashboard/NewCustomerDrawer";
+import EditCustomerDrawer from "@/components/dashboard/EditCustomerDrawer";
 import { prisma } from "@/lib/prisma";
 
-const TABLE_COLS = ["Name", "Phone", "Email", "Total Jobs", "Total Spend", "Status", "Customer Since"];
+const TABLE_COLS = ["Name", "Phone", "Email", "Total Jobs", "Total Spend", "Status", "Customer Since", ""];
 
 function CustomerStatusBadge({ status }: { status: string }) {
   return (
@@ -123,6 +124,9 @@ export default async function CustomersPage() {
                       </td>
                       <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
                         {customer.since}
+                      </td>
+                      <td className="px-4 py-3 text-right whitespace-nowrap">
+                        <EditCustomerDrawer customer={customer} />
                       </td>
                     </tr>
                   );

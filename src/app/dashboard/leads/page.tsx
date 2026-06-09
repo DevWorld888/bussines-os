@@ -1,6 +1,7 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
 import NewLeadDrawer from "@/components/dashboard/NewLeadDrawer";
 import LeadStatusSelect from "@/components/dashboard/LeadStatusSelect";
+import EditLeadDrawer from "@/components/dashboard/EditLeadDrawer";
 import { prisma } from "@/lib/prisma";
 
 const TABLE_COLS = [
@@ -11,6 +12,7 @@ const TABLE_COLS = [
   "Status",
   "Source",
   "Follow-up",
+  "",
 ];
 
 export default async function LeadsPage() {
@@ -100,6 +102,9 @@ export default async function LeadsPage() {
                     </td>
                     <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
                       {lead.followUp ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                      <EditLeadDrawer lead={lead} />
                     </td>
                   </tr>
                 ))}

@@ -1,8 +1,9 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
 import NewJobDrawer from "@/components/dashboard/NewJobDrawer";
+import EditJobDrawer from "@/components/dashboard/EditJobDrawer";
 import { prisma } from "@/lib/prisma";
 
-const TABLE_COLS = ["Customer", "Service", "Address", "Date", "Value", "Status"];
+const TABLE_COLS = ["Customer", "Service", "Address", "Date", "Value", "Status", ""];
 
 type JobStatus = "scheduled" | "in-progress" | "completed" | "cancelled";
 
@@ -131,6 +132,9 @@ export default async function JobsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <JobStatusBadge status={job.status} />
+                    </td>
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                      <EditJobDrawer job={job} customers={customers} />
                     </td>
                   </tr>
                 ))}

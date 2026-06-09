@@ -1,8 +1,9 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
 import NewQuoteDrawer from "@/components/dashboard/NewQuoteDrawer";
+import EditQuoteDrawer from "@/components/dashboard/EditQuoteDrawer";
 import { prisma } from "@/lib/prisma";
 
-const TABLE_COLS = ["Quote #", "Customer", "Service", "Date", "Expires", "Total", "Status"];
+const TABLE_COLS = ["Quote #", "Customer", "Service", "Date", "Expires", "Total", "Status", ""];
 
 type QuoteStatus = "draft" | "sent" | "accepted" | "rejected";
 
@@ -136,6 +137,9 @@ export default async function QuotesPage() {
                     </td>
                     <td className="px-4 py-3">
                       <QuoteStatusBadge status={quote.status} />
+                    </td>
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                      <EditQuoteDrawer quote={quote} customers={customers} />
                     </td>
                   </tr>
                 ))}

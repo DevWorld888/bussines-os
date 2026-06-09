@@ -1,8 +1,9 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
 import NewTaskDrawer from "@/components/dashboard/NewTaskDrawer";
+import EditTaskDrawer from "@/components/dashboard/EditTaskDrawer";
 import { prisma } from "@/lib/prisma";
 
-const TABLE_COLS = ["Task", "Related To", "Due Date", "Priority", "Status"];
+const TABLE_COLS = ["Task", "Related To", "Due Date", "Priority", "Status", ""];
 
 type TaskStatus   = "todo" | "in-progress" | "done";
 type TaskPriority = "low" | "medium" | "high";
@@ -133,6 +134,9 @@ export default async function TasksPage() {
                     </td>
                     <td className="px-4 py-3">
                       <TaskStatusBadge status={task.status} />
+                    </td>
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                      <EditTaskDrawer task={task} />
                     </td>
                   </tr>
                 ))}
