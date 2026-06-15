@@ -35,6 +35,12 @@ export async function updateJob(id: number, formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+export async function updateJobStatus(id: number, status: string) {
+  await prisma.job.update({ where: { id }, data: { status } });
+  revalidatePath("/dashboard/jobs");
+  revalidatePath("/dashboard");
+}
+
 export async function deleteJob(id: number) {
   await prisma.job.delete({ where: { id } });
   revalidatePath("/dashboard/jobs");

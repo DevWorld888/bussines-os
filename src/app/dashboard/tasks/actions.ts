@@ -33,6 +33,12 @@ export async function updateTask(id: number, formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+export async function updateTaskStatus(id: number, status: string) {
+  await prisma.task.update({ where: { id }, data: { status } });
+  revalidatePath("/dashboard/tasks");
+  revalidatePath("/dashboard");
+}
+
 export async function deleteTask(id: number) {
   await prisma.task.delete({ where: { id } });
   revalidatePath("/dashboard/tasks");

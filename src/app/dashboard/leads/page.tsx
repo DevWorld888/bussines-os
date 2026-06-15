@@ -1,19 +1,7 @@
 import OverviewCard from "@/components/dashboard/OverviewCard";
 import NewLeadDrawer from "@/components/dashboard/NewLeadDrawer";
-import LeadStatusSelect from "@/components/dashboard/LeadStatusSelect";
-import EditLeadDrawer from "@/components/dashboard/EditLeadDrawer";
+import LeadsTable from "@/components/dashboard/LeadsTable";
 import { prisma } from "@/lib/prisma";
-
-const TABLE_COLS = [
-  "Name",
-  "Phone",
-  "Email",
-  "Service",
-  "Status",
-  "Source",
-  "Follow-up",
-  "",
-];
 
 export default async function LeadsPage() {
   const leads = await prisma.lead.findMany({ orderBy: { createdAt: "asc" } });
@@ -48,76 +36,7 @@ export default async function LeadsPage() {
       </div>
 
       {/* ── Table section ───────────────────────────────────── */}
-      <section className="flex flex-col gap-3">
-
-        {/* Toolbar */}
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Search leads…"
-            readOnly
-            className="h-8 w-60 px-3 rounded-[10px] border border-[#e5e5e5] bg-white text-[13px] text-[#0a0a0a] placeholder:text-[#737373] outline-none cursor-default"
-          />
-        </div>
-
-        {/* Table */}
-        <div className="card-elevated p-0 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse">
-              <thead>
-                <tr className="border-b border-[#e5e5e5] bg-[#f9f9f9]">
-                  {TABLE_COLS.map((col) => (
-                    <th
-                      key={col}
-                      className="px-4 py-2.5 text-left t-caption text-[#737373] font-medium uppercase tracking-widest whitespace-nowrap"
-                    >
-                      {col}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {leads.map((lead) => (
-                  <tr
-                    key={lead.id}
-                    className="border-b border-[#e5e5e5] last:border-0 bg-white transition-colors hover:bg-[#f9f9f9]"
-                  >
-                    <td className="px-4 py-3 t-small font-medium text-[#000000] whitespace-nowrap">
-                      {lead.name}
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
-                      {lead.phone}
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#737373]">
-                      {lead.email}
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#0a0a0a] whitespace-nowrap">
-                      {lead.service}
-                    </td>
-                    <td className="px-4 py-3">
-                      <LeadStatusSelect id={lead.id} status={lead.status} />
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
-                      {lead.source}
-                    </td>
-                    <td className="px-4 py-3 t-small text-[#737373] whitespace-nowrap">
-                      {lead.followUp ?? "—"}
-                    </td>
-                    <td className="px-4 py-3 text-right whitespace-nowrap">
-                      <EditLeadDrawer lead={lead} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Row count */}
-        <p className="t-caption text-[#737373]">
-          {leads.length} leads total
-        </p>
-      </section>
+      <LeadsTable leads={leads} />
 
     </div>
   );

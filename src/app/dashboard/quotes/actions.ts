@@ -39,6 +39,12 @@ export async function updateQuote(id: number, formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+export async function updateQuoteStatus(id: number, status: string) {
+  await prisma.quote.update({ where: { id }, data: { status } });
+  revalidatePath("/dashboard/quotes");
+  revalidatePath("/dashboard");
+}
+
 export async function deleteQuote(id: number) {
   await prisma.quote.delete({ where: { id } });
   revalidatePath("/dashboard/quotes");
