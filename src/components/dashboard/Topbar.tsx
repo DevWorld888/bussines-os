@@ -3,31 +3,32 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-
-const navItems = [
-  { label: "Overview",   href: "/dashboard" },
-  { label: "Leads",      href: "/dashboard/leads" },
-  { label: "Customers",  href: "/dashboard/customers" },
-  { label: "Jobs",       href: "/dashboard/jobs" },
-  { label: "Quotes",     href: "/dashboard/quotes" },
-  { label: "Tasks",      href: "/dashboard/tasks" },
-];
-
-const bottomItems = [
-  { label: "Settings", href: "/dashboard/settings" },
-];
+import { navItems, bottomItems } from "@/components/dashboard/Sidebar";
 
 const titles: Record<string, string> = {
-  "/dashboard":           "Overview",
+  "/dashboard":           "Dashboard",
   "/dashboard/leads":     "Leads",
   "/dashboard/customers": "Customers",
-  "/dashboard/jobs":      "Jobs",
   "/dashboard/quotes":    "Quotes",
+  "/dashboard/jobs":      "Jobs",
+  "/dashboard/calendar":  "Calendar",
+  "/dashboard/reviews":   "Reviews",
+  "/dashboard/reports":   "Reports",
   "/dashboard/tasks":     "Tasks",
   "/dashboard/settings":  "Settings",
 };
 
-function MobileNavLink({ href, label, onClick }: { href: string; label: string; onClick: () => void }) {
+function MobileNavLink({
+  href,
+  label,
+  icon: Icon,
+  onClick,
+}: {
+  href: string;
+  label: string;
+  icon: (typeof navItems)[number]["icon"];
+  onClick: () => void;
+}) {
   const pathname = usePathname();
   const isActive = pathname === href;
 
@@ -36,12 +37,13 @@ function MobileNavLink({ href, label, onClick }: { href: string; label: string; 
       href={href}
       onClick={onClick}
       className={[
-        "flex items-center px-3 py-2 rounded-[10px] text-[14px] transition-colors",
+        "flex items-center gap-2.5 px-3 py-2 rounded-[10px] text-[14px] transition-colors",
         isActive
           ? "bg-[#f2f2f2] text-[#000000] font-semibold"
           : "text-[#737373] font-medium hover:bg-[#f2f2f2] hover:text-[#0a0a0a]",
       ].join(" ")}
     >
+      <Icon className="shrink-0" />
       {label}
     </Link>
   );
@@ -101,14 +103,14 @@ export default function Topbar() {
                 ✕
               </button>
             </div>
-            <nav className="flex-1 py-3 px-2 flex flex-col gap-0.5">
+            <nav className="flex-1 py-3 px-2 flex flex-col gap-0.5 overflow-y-auto">
               {navItems.map((item) => (
-                <MobileNavLink key={item.href} href={item.href} label={item.label} onClick={close} />
+                <MobileNavLink key={item.href} href={item.href} label={item.label} icon={item.icon} onClick={close} />
               ))}
             </nav>
             <div className="py-3 px-2 border-t border-[#e5e5e5] flex flex-col gap-0.5">
               {bottomItems.map((item) => (
-                <MobileNavLink key={item.href} href={item.href} label={item.label} onClick={close} />
+                <MobileNavLink key={item.href} href={item.href} label={item.label} icon={item.icon} onClick={close} />
               ))}
             </div>
           </aside>
