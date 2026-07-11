@@ -1,11 +1,10 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
 
-const adapter = new PrismaLibSql({
-  url: process.env.DATABASE_URL ?? "file:./dev.db",
+import { PrismaPg } from "@prisma/adapter-pg";
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
 });
-const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Clear in dependency order
@@ -113,7 +112,7 @@ async function main() {
   await prisma.businessInfo.create({
     data: {
       bizName:  "Suarez Painting Co.",
-      abn:      "12 345 678 901",
+      abn:      "12 345 678 902",
       industry: "Painting & Decorating",
       website:  "https://suarezpainting.com.au",
       address:  "14 Harbour St, Sydney NSW 2000",
