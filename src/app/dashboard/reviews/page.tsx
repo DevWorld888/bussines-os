@@ -1,6 +1,14 @@
+import OverviewCard from "@/components/dashboard/OverviewCard";
+import ReviewsTable from "@/components/dashboard/ReviewsTable";
+import { mockReviews, getReviewsSummary } from "@/lib/mock-reviews";
+
 export default function ReviewsPage() {
+  const summary = getReviewsSummary(mockReviews);
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col" style={{ gap: "40px" }}>
+
+      {/* ── Page header ─────────────────────────────────────── */}
       <div>
         <h2 className="t-heading text-[#000000]">Reviews</h2>
         <p className="t-small text-[#737373] mt-1">
@@ -8,13 +16,17 @@ export default function ReviewsPage() {
         </p>
       </div>
 
-      <div className="card-elevated flex flex-col items-center justify-center gap-2 py-20 text-center">
-        <p className="t-small font-semibold text-[#0a0a0a]">Coming soon</p>
-        <p className="t-caption text-[#737373] max-w-xs">
-          Requesting Google reviews, tracking feedback, and automated
-          post-job review requests will live here.
-        </p>
+      {/* ── Summary cards ───────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        <OverviewCard label="Average Rating"   value={summary.averageRating} />
+        <OverviewCard label="Total Reviews"    value={String(summary.totalReviews)} />
+        <OverviewCard label="Pending Requests" value={String(summary.pendingRequests)} />
+        <OverviewCard label="Response Rate"    value={`${summary.responseRate}%`} />
       </div>
+
+      {/* ── Reviews table ───────────────────────────────────── */}
+      <ReviewsTable reviews={mockReviews} />
+
     </div>
   );
 }

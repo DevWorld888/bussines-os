@@ -70,32 +70,32 @@ async function main() {
   // ── Quotes ─────────────────────────────────────────────────────
   await prisma.quote.createMany({
     data: [
-      { quoteNumber: "Q-0001", customerId: byName["Priya Sharma"],  service: "Interior Painting", date: "2026-05-01", expiresOn: "2026-05-15", total: 1800, status: "accepted" },
-      { quoteNumber: "Q-0002", customerId: byName["Tom Nguyen"],    service: "Fence Install",      date: "2026-05-03", expiresOn: "2026-05-17", total: 950,  status: "sent"     },
-      { quoteNumber: "Q-0003", customerId: byName["Rachel Kim"],    service: "Exterior Painting",  date: "2026-05-05", expiresOn: "2026-05-19", total: 3200, status: "accepted" },
-      { quoteNumber: "Q-0004", customerId: byName["David Okonkwo"],service: "Deck Restoration",   date: "2026-05-06", expiresOn: "2026-05-20", total: 580,  status: "rejected" },
-      { quoteNumber: "Q-0005", customerId: byName["Linda Tran"],    service: "Roof Painting",      date: "2026-05-08", expiresOn: "2026-05-22", total: 2400, status: "draft"    },
-      { quoteNumber: "Q-0006", customerId: byName["Mark Jensen"],   service: "Interior Painting",  date: "2026-05-09", expiresOn: "2026-05-23", total: 1600, status: "sent"     },
-      { quoteNumber: "Q-0007", customerId: byName["Susan Patel"],   service: "Pressure Washing",   date: "2026-05-10", expiresOn: "2026-05-24", total: 320,  status: "draft"    },
-      { quoteNumber: "Q-0008", customerId: byName["Chris Lawson"],  service: "Commercial Paint",   date: "2026-05-11", expiresOn: "2026-05-25", total: 5800, status: "sent"     },
-      { quoteNumber: "Q-0009", customerId: byName["Amanda Fox"],    service: "Fence Painting",     date: "2026-05-12", expiresOn: "2026-05-26", total: 420,  status: "accepted" },
-      { quoteNumber: "Q-0010", customerId: byName["Ben Hartley"],   service: "Full House Repaint", date: "2026-05-13", expiresOn: "2026-05-27", total: 7200, status: "accepted" },
+      { quoteNumber: "Q-0001", customerId: byName["Priya Sharma"],  service: "Interior Painting", date: "2026-05-01", expiresOn: "2026-05-15", scheduledVisit: null,         total: 1800, status: "accepted" },
+      { quoteNumber: "Q-0002", customerId: byName["Tom Nguyen"],    service: "Fence Install",      date: "2026-05-03", expiresOn: "2026-05-17", scheduledVisit: "2026-05-09", total: 950,  status: "sent"     },
+      { quoteNumber: "Q-0003", customerId: byName["Rachel Kim"],    service: "Exterior Painting",  date: "2026-05-05", expiresOn: "2026-05-19", scheduledVisit: null,         total: 3200, status: "accepted" },
+      { quoteNumber: "Q-0004", customerId: byName["David Okonkwo"],service: "Deck Restoration",   date: "2026-05-06", expiresOn: "2026-05-20", scheduledVisit: null,         total: 580,  status: "rejected" },
+      { quoteNumber: "Q-0005", customerId: byName["Linda Tran"],    service: "Roof Painting",      date: "2026-05-08", expiresOn: "2026-05-22", scheduledVisit: "2026-05-13", total: 2400, status: "draft"    },
+      { quoteNumber: "Q-0006", customerId: byName["Mark Jensen"],   service: "Interior Painting",  date: "2026-05-09", expiresOn: "2026-05-23", scheduledVisit: "2026-05-16", total: 1600, status: "sent"     },
+      { quoteNumber: "Q-0007", customerId: byName["Susan Patel"],   service: "Pressure Washing",   date: "2026-05-10", expiresOn: "2026-05-24", scheduledVisit: null,         total: 320,  status: "draft"    },
+      { quoteNumber: "Q-0008", customerId: byName["Chris Lawson"],  service: "Commercial Paint",   date: "2026-05-11", expiresOn: "2026-05-25", scheduledVisit: "2026-05-19", total: 5800, status: "sent"     },
+      { quoteNumber: "Q-0009", customerId: byName["Amanda Fox"],    service: "Fence Painting",     date: "2026-05-12", expiresOn: "2026-05-26", scheduledVisit: null,         total: 420,  status: "accepted" },
+      { quoteNumber: "Q-0010", customerId: byName["Ben Hartley"],   service: "Full House Repaint", date: "2026-05-13", expiresOn: "2026-05-27", scheduledVisit: "2026-05-21", total: 7200, status: "accepted" },
     ],
   });
 
   // ── Tasks ──────────────────────────────────────────────────────
   await prisma.task.createMany({
     data: [
-      { title: "Follow up on quote Q-0002",              relatedTo: "Tom Nguyen",    dueDate: "2026-05-12", priority: "high",   status: "todo"        },
-      { title: "Order paint supplies for Job #3",        relatedTo: "Rachel Kim",    dueDate: "2026-05-13", priority: "high",   status: "in-progress" },
-      { title: "Send invoice for completed fence job",   relatedTo: "Tom Nguyen",    dueDate: "2026-05-11", priority: "medium", status: "done"        },
-      { title: "Confirm site visit with Linda Tran",     relatedTo: "Linda Tran",    dueDate: "2026-05-14", priority: "medium", status: "todo"        },
-      { title: "Update quote Q-0005 with revised scope", relatedTo: "Linda Tran",    dueDate: "2026-05-15", priority: "high",   status: "todo"        },
-      { title: "Call Chris Lawson re: start date",       relatedTo: "Chris Lawson",  dueDate: "2026-05-13", priority: "medium", status: "in-progress" },
-      { title: "Schedule roof painting for Ben Hartley", relatedTo: "Ben Hartley",   dueDate: "2026-05-16", priority: "low",    status: "todo"        },
-      { title: "Take before photos at Mark Jensen site", relatedTo: "Mark Jensen",   dueDate: "2026-05-12", priority: "low",    status: "done"        },
-      { title: "Check stock levels for exterior paint",  relatedTo: "—",             dueDate: "2026-05-14", priority: "low",    status: "todo"        },
-      { title: "Send completion report to Priya Sharma", relatedTo: "Priya Sharma",  dueDate: "2026-05-18", priority: "medium", status: "todo"        },
+      { title: "Follow up on quote Q-0002",              relatedTo: "Tom Nguyen",    customerId: byName["Tom Nguyen"],    dueDate: "2026-05-12", priority: "high",   status: "todo"        },
+      { title: "Order paint supplies for Job #3",        relatedTo: "Rachel Kim",    customerId: byName["Rachel Kim"],    dueDate: "2026-05-13", priority: "high",   status: "in-progress" },
+      { title: "Send invoice for completed fence job",   relatedTo: "Tom Nguyen",    customerId: byName["Tom Nguyen"],    dueDate: "2026-05-11", priority: "medium", status: "done"        },
+      { title: "Confirm site visit with Linda Tran",     relatedTo: "Linda Tran",    customerId: byName["Linda Tran"],    dueDate: "2026-05-14", priority: "medium", status: "todo"        },
+      { title: "Update quote Q-0005 with revised scope", relatedTo: "Linda Tran",    customerId: byName["Linda Tran"],    dueDate: "2026-05-15", priority: "high",   status: "todo"        },
+      { title: "Call Chris Lawson re: start date",       relatedTo: "Chris Lawson",  customerId: byName["Chris Lawson"],  dueDate: "2026-05-13", priority: "medium", status: "in-progress" },
+      { title: "Schedule roof painting for Ben Hartley", relatedTo: "Ben Hartley",   customerId: byName["Ben Hartley"],   dueDate: "2026-05-16", priority: "low",    status: "todo"        },
+      { title: "Take before photos at Mark Jensen site", relatedTo: "Mark Jensen",   customerId: byName["Mark Jensen"],   dueDate: "2026-05-12", priority: "low",    status: "done"        },
+      { title: "Check stock levels for exterior paint",  relatedTo: "—",             customerId: null,                     dueDate: "2026-05-14", priority: "low",    status: "todo"        },
+      { title: "Send completion report to Priya Sharma", relatedTo: "Priya Sharma",  customerId: byName["Priya Sharma"],  dueDate: "2026-05-18", priority: "medium", status: "todo"        },
     ],
   });
 

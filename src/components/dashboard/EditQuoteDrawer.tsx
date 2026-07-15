@@ -10,8 +10,10 @@ type Quote = {
   service: string;
   date: string;
   expiresOn: string;
+  scheduledVisit: string | null;
   total: number;
   status: string;
+  notes: string | null;
 };
 
 type CustomerOption = { id: number; name: string };
@@ -78,6 +80,7 @@ export default function EditQuoteDrawer({ quote, customers }: { quote: Quote; cu
               <Field label="Quote Date"   name="date"      type="date" required defaultValue={quote.date} />
               <Field label="Expires On"   name="expiresOn" type="date" required defaultValue={quote.expiresOn} />
               <Field label="Total ($)"    name="total"     type="number" defaultValue={String(quote.total)} placeholder="0.00" />
+              <Field label="Scheduled Visit" name="scheduledVisit" type="date" defaultValue={quote.scheduledVisit ?? ""} />
 
               <SelectField label="Status" name="status" defaultValue={quote.status}>
                 <option value="draft">Draft</option>
@@ -85,6 +88,8 @@ export default function EditQuoteDrawer({ quote, customers }: { quote: Quote; cu
                 <option value="accepted">Accepted</option>
                 <option value="rejected">Rejected</option>
               </SelectField>
+
+              <TextAreaField label="Notes" name="notes" defaultValue={quote.notes ?? ""} placeholder="Any internal notes about this quote…" />
 
               <div className="mt-auto pt-2 flex gap-2">
                 <button type="submit" className="btn-primary flex-1 justify-center" disabled={isPending}>

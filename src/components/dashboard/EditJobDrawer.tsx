@@ -11,6 +11,7 @@ type Job = {
   date: string;
   value: number;
   status: string;
+  notes?: string | null;
 };
 
 type CustomerOption = { id: number; name: string };
@@ -85,6 +86,8 @@ export default function EditJobDrawer({ job, customers }: { job: Job; customers:
                 <option value="cancelled">Cancelled</option>
               </SelectField>
 
+              <TextAreaField label="Notes" name="notes" defaultValue={job.notes ?? ""} placeholder="Any internal notes about this job…" />
+
               <div className="mt-auto pt-2 flex gap-2">
                 <button type="submit" className="btn-primary flex-1 justify-center" disabled={isPending}>
                   {isPending ? "Saving…" : "Save Changes"}
@@ -141,6 +144,18 @@ function SelectField({ label, name, defaultValue, children }: {
         className="h-9 px-3 rounded-[10px] border border-[#e5e5e5] bg-white text-[13px] text-[#0a0a0a] outline-none focus:border-[#0a0a0a] transition-colors cursor-pointer">
         {children}
       </select>
+    </div>
+  );
+}
+
+function TextAreaField({ label, name, placeholder, defaultValue }: {
+  label: string; name: string; placeholder?: string; defaultValue?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="t-caption text-[#737373] font-medium uppercase tracking-widest">{label}</label>
+      <textarea name={name} placeholder={placeholder} defaultValue={defaultValue} rows={3}
+        className="px-3 py-2 rounded-[10px] border border-[#e5e5e5] bg-white text-[13px] text-[#0a0a0a] placeholder:text-[#737373] outline-none focus:border-[#0a0a0a] transition-colors resize-none" />
     </div>
   );
 }

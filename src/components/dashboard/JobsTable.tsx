@@ -12,6 +12,7 @@ type JobRow = {
   value: number;
   status: string;
   customerId: number;
+  notes: string | null;
   createdAt: Date;
   customer: { name: string };
 };

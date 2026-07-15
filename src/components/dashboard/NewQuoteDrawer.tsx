@@ -81,10 +81,14 @@ export default function NewQuoteDrawer({ customers }: { customers: CustomerOptio
 
               <Field label="Total ($)" name="total" type="number" placeholder="0.00" required />
 
+              <Field label="Scheduled Visit" name="scheduledVisit" type="date" />
+
               <SelectField label="Status" name="status">
                 <option value="draft">Draft</option>
                 <option value="sent">Sent</option>
               </SelectField>
+
+              <TextAreaField label="Notes" name="notes" placeholder="Any internal notes about this quote…" />
 
               <div className="mt-auto pt-2 flex gap-2">
                 <button
@@ -154,6 +158,28 @@ function SelectField({
       >
         {children}
       </select>
+    </div>
+  );
+}
+
+function TextAreaField({
+  label, name, placeholder,
+}: {
+  label: string;
+  name: string;
+  placeholder?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="t-caption text-[#737373] font-medium uppercase tracking-widest">
+        {label}
+      </label>
+      <textarea
+        name={name}
+        placeholder={placeholder}
+        rows={3}
+        className="px-3 py-2 rounded-[10px] border border-[#e5e5e5] bg-white text-[13px] text-[#0a0a0a] placeholder:text-[#737373] outline-none focus:border-[#0a0a0a] transition-colors resize-none"
+      />
     </div>
   );
 }

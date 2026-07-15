@@ -29,6 +29,7 @@ model Customer {
   since     String
   jobs      Job[]
   quotes    Quote[]
+  tasks     Task[]
   createdAt DateTime @default(now())
 }
 
@@ -41,30 +42,36 @@ model Job {
   date       String
   value      Float
   status     String   @default("scheduled")
+  notes      String?
   createdAt  DateTime @default(now())
 }
 
 model Quote {
-  id          Int      @id @default(autoincrement())
-  quoteNumber String   @unique
-  customerId  Int
-  customer    Customer @relation(fields: [customerId], references: [id])
-  service     String
-  date        String
-  expiresOn   String
-  total       Float
-  status      String   @default("draft")
-  createdAt   DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  quoteNumber    String   @unique
+  customerId     Int
+  customer       Customer @relation(fields: [customerId], references: [id])
+  service        String
+  date           String
+  expiresOn      String
+  scheduledVisit String?
+  total          Float
+  status         String   @default("draft")
+  notes          String?
+  createdAt      DateTime @default(now())
 }
 
 model Task {
-  id        Int      @id @default(autoincrement())
-  title     String
-  relatedTo String
-  dueDate   String
-  priority  String   @default("medium")
-  status    String   @default("todo")
-  createdAt DateTime @default(now())
+  id         Int       @id @default(autoincrement())
+  title      String
+  relatedTo  String
+  customerId Int?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  dueDate    String
+  priority   String    @default("medium")
+  status     String    @default("todo")
+  notes      String?
+  createdAt  DateTime  @default(now())
 }
 
 model UserProfile {
