@@ -151,6 +151,18 @@ function SelectField({ label, name, defaultValue, children }: {
   );
 }
 
+function TextAreaField({ label, name, defaultValue, placeholder }: {
+  label: string; name: string; defaultValue?: string; placeholder?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="t-caption text-[#737373] font-medium uppercase tracking-widest">{label}</label>
+      <textarea name={name} placeholder={placeholder} defaultValue={defaultValue}
+        className="px-3 py-2 rounded-[10px] border border-[#e5e5e5] bg-white text-[13px] text-[#0a0a0a] placeholder:text-[#737373] outline-none focus:border-[#0a0a0a] transition-colors resize-none" />
+    </div>
+  );
+}
+
 function PencilIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
