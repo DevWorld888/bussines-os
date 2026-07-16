@@ -15,6 +15,8 @@ type QuoteRow = {
   customerId: number;
   createdAt: Date;
   customer: { name: string };
+  scheduledVisit: string | null;
+  notes: string | null;
 };
 
 type CustomerOption = { id: number; name: string };
